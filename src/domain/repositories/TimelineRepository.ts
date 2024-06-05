@@ -1,3 +1,4 @@
+import { IncludeId } from "../../shared/types";
 import { ITimeline, Timeline } from "../models/Timeline";
 
 export class TimelineRepository {
@@ -7,8 +8,8 @@ export class TimelineRepository {
         return newTimeline;
     }
 
-    async getTimelines(options: any): Promise<Array<ITimeline>> {
+    async getTimelines(options: any): Promise<Array<IncludeId<ITimeline>>> {
         const timelines = await Timeline.find(options);
-        return timelines;
+        return timelines as Array<IncludeId<ITimeline>>;
     }
 }

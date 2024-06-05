@@ -1,8 +1,12 @@
 import { TimelineService } from "../../application/services/TimelineService";
 import { Request, Response } from "express";
 import { TimelineRepository } from "../../domain/repositories/TimelineRepository";
+import { TodoRepository } from "../../domain/repositories/TodoRepository";
 
-const timelineService = new TimelineService(new TimelineRepository());
+const timelineService = new TimelineService(
+    new TimelineRepository(),
+    new TodoRepository(),
+);
 
 export class TimelineController {
     async createTimeline(req: Request, res: Response) {
