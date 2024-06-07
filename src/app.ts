@@ -7,6 +7,8 @@ import morgan from "morgan";
 import clientRoute from "./infrastructure/routes/Client";
 import initializeSocket from "./infrastructure/socket";
 import initializeCronJobs from "./infrastructure/cron";
+import { appErrorHandler } from "./shared/middlewares/ErrorHandler";
+import { appResponseHandler } from "./shared/middlewares/ResponseHandler";
 
 const PORT = process.env.PORT || 3000;
 
@@ -23,7 +25,10 @@ app.use(
     morgan(":method :url :status :res[content-length] - :response-time ms"),
 );
 
-app.use("/v1/api", clientRoute);
+app.use("/api/v1", clientRoute);
+
+app.use(appResponseHandler);
+app.use(appErrorHandler);
 
 mongoose
     .connect("mongodb://localhost:27017/welog")

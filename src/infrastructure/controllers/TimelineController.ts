@@ -1,5 +1,5 @@
 import { TimelineService } from "../../application/services/TimelineService";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { TimelineRepository } from "../../domain/repositories/TimelineRepository";
 import { TodoRepository } from "../../domain/repositories/TodoRepository";
 
@@ -9,24 +9,30 @@ const timelineService = new TimelineService(
 );
 
 export class TimelineController {
-    async createTimeline(req: Request, res: Response) {
+    async createTimeline(req: Request, res: Response, next: NextFunction) {
         try {
             const { date } = req.body;
             const timeline = await timelineService.createTimeline({
                 date,
             });
-            res.status(201).json(timeline);
+
+            res.status(201);
+            res.locals.data = timeline;
+            next();
         } catch (error) {
-            res.status(500).json(error);
+            next(error);
         }
     }
 
-    async getTimelines(req: Request, res: Response) {
+    async getTimelines(req: Request, res: Response, next: NextFunction) {
         try {
             const timelines = await timelineService.getTimelines(req.query);
-            res.status(200).json(timelines);
+
+            res.status(200);
+            res.locals.data = timelines;
+            next();
         } catch (error) {
-            res.status(500).json(error);
+            next(error);
         }
     }
 }

@@ -4,6 +4,7 @@ export interface ITodo {
     title: string;
     timeline_id?: ObjectId;
     done?: boolean;
+    order?: number;
 }
 
 interface ITodoDoc extends Document, ITodo {}
@@ -19,6 +20,10 @@ const todoSchema = new Schema<ITodoDoc>({
     done: {
         type: Boolean,
         default: false,
+    },
+    order: {
+        type: Number,
+        default: 0,
     },
 });
 

@@ -1,51 +1,59 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { TodoService } from "../../application/services/TodoService";
 import { TodoRepository } from "../../domain/repositories/TodoRepository";
 
 const todoService = new TodoService(new TodoRepository());
 
 export class TodoController {
-    async createTodo(req: Request, res: Response) {
+    async createTodo(req: Request, res: Response, next: NextFunction) {
         try {
-            const { title, timeline_id } = req.body;
+            const { title, timeline_id, above, below } = req.body;
 
             const todo = await todoService.createTodo({
                 title,
                 timeline_id,
+                above,
+                below,
             });
 
-            res.status(201).json(todo);
+            res.status(201);
+            res.locals.data = todo;
+            next();
         } catch (error) {
-            res.status(500).json(error);
+            next(error);
         }
     }
 
-    async removeTodo(req: Request, res: Response) {
+    async removeTodo(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
 
             await todoService.removeTodo(id);
 
-            res.status(200).json("Deleted");
+            res.status(200);
+            res.locals.data = "Deleted";
+            next();
         } catch (error) {
-            res.status(500).json(error);
+            next(error);
         }
     }
 
-    async updateTodo(req: Request, res: Response) {
+    async updateTodo(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
             const options = req.body;
 
             const updated = await todoService.updateTodo(id, options);
 
-            res.status(200).json(updated);
+            res.status(200);
+            res.locals.data = updated;
+            next();
         } catch (error) {
-            res.status(500).json(error);
+            next(error);
         }
     }
 
-    async updateTodoByKey(req: Request, res: Response) {
+    async updateTodoByKey(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
             const { key, value } = req.body;
@@ -56,9 +64,26 @@ export class TodoController {
 
             const updated = await todoService.updateTodo(id, options);
 
-            res.status(200).json(updated);
+            res.status(200);
+            res.locals.data = updated;
+            next();
         } catch (error) {
-            res.status(500).json(error);
+            next(error);
+        }
+    }
+
+    async reOrderTodo(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            const { above, below } = req.body;
+
+            const updated = await todoService.reOrderTodo({ id, above, below });
+
+            res.status(200);
+            res.locals.data = updated;
+            next();
+        } catch (error) {
+            next(error);
         }
     }
 }

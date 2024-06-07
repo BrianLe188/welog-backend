@@ -14,11 +14,16 @@ export class TodoRepository {
     }
 
     async getTodos(options: any) {
-        const todos = await Todo.find(options);
+        const todos = await Todo.find(options).sort({
+            order: 1,
+        });
         return todos;
     }
 
-    async updateTodo(id: string, options: ITodo): Promise<ITodo | null> {
+    async updateTodo(
+        id: string,
+        options: Partial<ITodo>,
+    ): Promise<ITodo | null> {
         const updated = await Todo.findByIdAndUpdate(id, options, {
             new: true,
         });
