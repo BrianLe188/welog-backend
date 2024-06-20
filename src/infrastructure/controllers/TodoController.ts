@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { TodoService } from "../../application/services/TodoService";
 import { TodoRepository } from "../../domain/repositories/TodoRepository";
+import { DELETED } from "../../shared/constants/message";
 
 const todoService = new TodoService(new TodoRepository());
 
@@ -31,7 +32,7 @@ export class TodoController {
             await todoService.removeTodo(id);
 
             res.status(200);
-            res.locals.data = "Deleted";
+            res.locals.data = DELETED;
             next();
         } catch (error) {
             next(error);

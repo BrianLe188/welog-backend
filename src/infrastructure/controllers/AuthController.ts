@@ -2,6 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { AuthService } from "../../application/services/AuthService";
 import { UserRepositoty } from "../../domain/repositories/UserRepository";
 import { UserService } from "../../application/services/UserService";
+import {
+    EMAIL_OR_PASSWORD_MISSING,
+    USER_CREATED,
+    USER_NOT_FOUND,
+    USER_WITH_EMAIL_EXIST,
+} from "../../shared/constants/message";
 
 const userRepository = new UserRepositoty();
 const authService = new AuthService(userRepository);
@@ -18,7 +24,7 @@ export class AuthController {
 
             if (existingUser) {
                 res.status(409);
-                throw new Error("User with this email already exists");
+                throw new Error(USER_WITH_EMAIL_EXIST);
             }
 
             await userService.createUser({
@@ -28,7 +34,7 @@ export class AuthController {
             });
 
             res.status(200);
-            res.locals.data = "User created";
+            res.locals.data = USER_CREATED;
             next();
         } catch (error) {
             next(error);
@@ -41,14 +47,14 @@ export class AuthController {
 
             if (!email || !password) {
                 res.status(400);
-                throw new Error("Email or password is missing");
+                throw new Error(EMAIL_OR_PASSWORD_MISSING);
             }
 
             const user = await userService.getOne({ email });
 
             if (!user) {
                 res.status(401);
-                throw new Error("User not found");
+                throw new Error(USER_NOT_FOUND);
             }
 
             const tokens = authService.sign({
